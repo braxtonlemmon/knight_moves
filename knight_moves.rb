@@ -59,6 +59,7 @@ end
 knight_moves([0,0], [7,6])
 knight_moves([0,1], [0,1])
 knight_moves([8,9], [1,2])
+knight_moves([0,0], [3,4])
 
 
 
