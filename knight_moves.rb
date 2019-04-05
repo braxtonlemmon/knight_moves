@@ -1,7 +1,5 @@
 #!/home/braxton/.rbenv/shims/ruby
 
-# TODO: Fix bug. When running knight_moves([1,4],[1,3]) knight repeats two moves, resulting in 5 moves, when the answer is 3 moves.
-#       Track the path the piece takes and don't allow repeats
 require_relative 'node'
 
 class Knight 
@@ -31,23 +29,18 @@ class Knight
 		result[0].between?(0,7) && result[1].between?(0,7) ? true : false
 	end
 
-	def build_level(queue)
-		new_queue = Array.new
-		until queue.empty?
-		  move = queue.shift
-		  new_queue += build_children(move)
+	def pathway(node)
+		until node.parent.nil?
+			@path << node.parent.address
+			node = node.parent
 		end
-		new_queue
+		path
 	end
 
-	def completion(move, level)
-		puts "You reached your spot in #{level} moves! Here is your path:"
+	def completion(move)
+		puts "You reached your spot in #{pathway(move).size} moves! Here is your path:"
+		path.reverse.each { |move| p move }
 		p move.address
-		path = move
-		until path.parent.nil?
-			p path.parent.address
-			path = path.parent
-		end
 	end
 end
 
@@ -55,20 +48,18 @@ def knight_moves(root, goal)
 	return puts "You are already there!" if root == goal
 	knight = Knight.new
 	return puts "Invalid!" unless root[0].between?(0,7) && root[1].between?(0,7) && goal[0].between?(0,7) && goal[1].between?(0,7)
-	
 	queue = knight.build_children(Node.new(root))
-	level = 1
 	while true
-		queue2 = Array.new
-		queue.each { |child| (child.address == goal) ? (return knight.completion(child, level)) : (queue2 << queue.shift) }
-		queue = knight.build_level(queue2)
-		level += 1
+		node = queue.shift
+		return knight.completion(node) if node.address == goal
+		queue += knight.build_children(node)
 	end
 end
 
-knight_moves([3,3], [4,3])
-knight_moves([9,0],[1,1])
-knight_moves([5,3], [2,2])
-knight_moves([1,4], [1,3])
+knight_moves([0,0], [7,6])
+knight_moves([0,1], [0,1])
+knight_moves([8,9], [1,2])
+
+
 
 
