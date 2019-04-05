@@ -11,19 +11,27 @@ class Knight
 		@path = Array.new
 	end
 
+	def build_children(root)
+		moves = [[-2,-1], [-2,1], [-1,-2], [-1,2], [1,-2], [1,2], [2,-1], [2,1]]
+		possible_moves = moves.select { |move| check_move(move, root.address) }
+		root.children = possible_moves.map { |move| Node.new([(move[0]+root.address[0]), (move[1]+root.address[1])], root) }
+	end
+
+	def completion(move)
+		puts "You reached your spot in #{pathway(move).size} moves! Here is your path:"
+		path.reverse.each { |move| p move }
+		p move.address
+	end
+
+	private
+
 	def make_board
 		board = Array.new(8) { Array.new(8) { Array.new(2) } }
 	  board.each_with_index do |row, row_i|
 			row.each_with_index { |column, column_i| column[0], column[1] = row_i, column_i }
 		end
 	end
-
-	def build_children(root)
-		moves = [[-2,-1], [-2,1], [-1,-2], [-1,2], [1,-2], [1,2], [2,-1], [2,1]]
-		possible_moves = moves.select { |move| check_move(move, root.address) }
-		root.children = possible_moves.map { |move| Node.new([(move[0]+root.address[0]), (move[1]+root.address[1])], root) }
-	end
-		
+	
 	def check_move(move, current)
 		result = [(move[0] + current[0]), (move[1] + current[1])]
 		result[0].between?(0,7) && result[1].between?(0,7) ? true : false
@@ -35,12 +43,6 @@ class Knight
 			node = node.parent
 		end
 		path
-	end
-
-	def completion(move)
-		puts "You reached your spot in #{pathway(move).size} moves! Here is your path:"
-		path.reverse.each { |move| p move }
-		p move.address
 	end
 end
 
